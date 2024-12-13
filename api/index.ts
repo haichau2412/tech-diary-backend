@@ -4,7 +4,7 @@ import utubeNote from './routes/videos/utubeNote'
 import session from 'express-session'
 import passport from 'passport';
 import { config } from 'dotenv';
-import auth, { isAuthenticated } from './routes/auth/auth'
+import auth from './routes/auth/auth'
 import bodyParser from 'body-parser';
 import './controller/auth'
 import cookieParser from 'cookie-parser'
