@@ -14,8 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = main;
 const mongoose_1 = __importDefault(require("mongoose"));
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
 mongoose_1.default.set("strictQuery", false);
-const mongoDB = "mongodb+srv://chau96cc:bubtjH3YwlxKEAGG@cluster0.o9pfd.mongodb.net/Utube?retryWrites=true&w=majority&appName=Cluster0";
+const mongoDB = `mongodb+srv://chau96cc:${process.env.PRIVATEMONGO}@cluster0.o9pfd.mongodb.net/Utube?retryWrites=true&w=majority&appName=Cluster0`;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         yield mongoose_1.default.connect(mongoDB);

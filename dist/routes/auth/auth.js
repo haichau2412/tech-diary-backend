@@ -15,7 +15,7 @@ function isAuthenticated(req, res, next) {
     res.redirect('/');
 }
 router.get('/auth/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/auth/google/callback', passport_1.default.authenticate('google', { failureRedirect: '/' }), (req, res) => {
+router.get('/oauth2callback', passport_1.default.authenticate('google', { failureRedirect: '/' }), (req, res) => {
     const user = req.user;
     const payload = {
         userId: user === null || user === void 0 ? void 0 : user.uuid,

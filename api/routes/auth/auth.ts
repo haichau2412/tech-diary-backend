@@ -20,7 +20,7 @@ router.get(
 );
 
 router.get(
-    '/auth/google/callback',
+    '/oauth2callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
         const user = req.user as UserDoc
