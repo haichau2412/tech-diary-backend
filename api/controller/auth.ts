@@ -12,7 +12,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            callbackURL: '/auth/google/callback',
+            callbackURL: 'https://tech-diary-backend.vercel.app/auth/google/callback',
         },
         async (accessToken: string,
             refreshToken: string,
