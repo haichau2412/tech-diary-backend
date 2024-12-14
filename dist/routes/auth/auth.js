@@ -22,6 +22,12 @@ router.get('/auth/google/callback', passport_1.default.authenticate('google', { 
     };
     const accessToken = (0, token_1.generateAccessToken)(payload);
     const refreshToken = (0, token_1.generateRefreshToken)(payload);
+    res.cookie("userId", user === null || user === void 0 ? void 0 : user.uuid, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 31536000
+    });
     res.cookie("refreshToken", refreshToken.default, {
         httpOnly: true,
         secure: true,

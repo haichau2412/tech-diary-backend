@@ -46,12 +46,15 @@ const VideoSchema = new mongoose_1.Schema({
     customName: { type: String },
     userId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User" },
     userUUID: { type: String, required: true },
+}, { timestamps: true });
+const IndividualNote = new mongoose_1.Schema({
+    from: { type: Number, required: true },
+    text: { type: String, required: true, maxLength: 200 }
 });
 const NoteSchema = new mongoose_1.Schema({
     videoId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Video" },
-    from: { type: Number, required: true, unique: true },
-    note: { type: String, maxLength: 200 }
-});
+    notes: [IndividualNote]
+}, { timestamps: true });
 exports.Video = mongoose_1.default.model("Video", VideoSchema, 'videos');
 exports.Note = mongoose_1.default.model("Note", NoteSchema, 'notes');
 exports.User = mongoose_1.default.model("User", UserSchema, 'users');

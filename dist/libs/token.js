@@ -9,14 +9,14 @@ exports.verifyAccessToken = verifyAccessToken;
 exports.verifyRefreshToken = verifyRefreshToken;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function generateAccessToken(payload) {
-    const accessToken = jsonwebtoken_1.default.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60s' });
+    const accessToken = jsonwebtoken_1.default.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15d' });
     return {
         default: accessToken,
-        tokenExpiration: 60
+        tokenExpiration: 15 * 24 * 60 * 60
     };
 }
 function generateRefreshToken(payload) {
-    const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+    const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
     return {
         default: refreshToken,
         tokenExpiration: 7 * 24 * 60 * 60
