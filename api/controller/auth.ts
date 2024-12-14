@@ -1,5 +1,5 @@
 import passport from "passport";
-import { Strategy, GoogleCallbackParameters, Profile, VerifyCallback } from "passport-google-oauth20";
+import { Strategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { config } from "dotenv";
 import { User } from "../models/video";
 import { v4 as uuidv4 } from 'uuid';

@@ -3,7 +3,6 @@ import passport from "passport";
 import { Router, Request, Response, NextFunction } from 'express';
 import { UserDoc } from "../../models/video";
 import { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } from "../../libs/token";
-import { VerifyErrors, JwtPayload } from 'jsonwebtoken'
 
 const router = Router();
 
@@ -30,6 +29,12 @@ router.get(
         const accessToken = generateAccessToken(payload)
         const refreshToken = generateRefreshToken(payload)
 
+        res.cookie("userId", user?.uuid, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            maxAge: 31536000
+        });
 
         res.cookie("refreshToken", refreshToken.default, {
             httpOnly: true,

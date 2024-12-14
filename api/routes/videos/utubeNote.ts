@@ -1,147 +1,27 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { Video, Note, User } from "../../models/video";
-import expressAsyncHandler from "express-async-handler";
-import { verifyAccessToken, verifyRefreshToken } from "../../libs/token";
+import { Router } from "express";
+import { verifyTokenMW } from "../../middlewares/tokenVerify";
+import { getVideo, getNote, addNote, addVideo, deleteVideo, deleteNote, updateVideoName } from "../../controller/utubeNote/video";
+import { youtubeIdVerify } from "../../middlewares/youtubeIdVerify";
 
 const router = Router();
 
-router.get("/videos/:youtubeId", expressAsyncHandler(async (req: Request , res: Response, next: NextFunction) => {
+router.post("/api/importUtubeNote", verifyTokenMW, getVideo)
 
-    // if (!token) {
-    //     res.status(401).json({ message: 'Unauthorized' });
-    //     return
-    // }
+router.get("/api/videos", verifyTokenMW, getVideo)
 
-    return
+router.post("/api/videos", verifyTokenMW, youtubeIdVerify, addVideo)
 
+router.delete("/api/videos/:videoId", verifyTokenMW, deleteVideo)
 
-    const video = await Video.findOne({
-        youtubeId: req.params.youtubeId
-    }).exec()
+router.patch("/api/videos/:videoId", verifyTokenMW, updateVideoName)
 
-    if (video === null) {
-        const err = new Error("Video not found");
-        res.status(404).json({
-            status: false,
-            message: err.message,
-        });
-        return
-    }
+router.delete("/api/videos", verifyTokenMW, youtubeIdVerify, addVideo)
 
-    res.status(200).json({
-        status: true,
-        data: 'haha',
-    });
-}))
+router.get("/api/notes/:youtubeId", verifyTokenMW, getNote)
 
-router.post("/api/videos/", expressAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { youtubeId, customName, userId } = req.body
+router.post("/api/notes/:youtubeId", verifyTokenMW, addNote)
 
-        if (!youtubeId) {
-            res.status(400).json({
-                success: false,
-                message: 'Title and content are required.',
-            });
-            return
-        }
-
-        const user = await User.findOne({
-            uuid: userId
-        })
-
-        if (user) {
-            const video = await Video.find({
-                youtubeId
-            })
-
-            if (video.length === 0) {
-                const newDoc = new Video({
-                    youtubeId,
-                    userId: user._id,
-                    userUUID: user.uuid,
-                    customName
-                })
-                await newDoc.save()
-                res.location(`/api/videos/${youtubeId}`).status(201).json({
-                    success: true,
-                    message: 'Resource created successfully'
-                })
-                return
-            }
-        }
-
-        res.location(`/api/videos/${youtubeId}`).status(409).json({
-            success: false,
-            message: 'Resource exist'
-        })
-        return
-    } catch (error) {
-        console.log('error', error)
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-}))
-
-router.get("/api/videos/:youtubeId/notes", expressAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const video = await Video.findOne({
-        youtubeId: req.params.youtubeId
-    }).exec()
-
-    if (video === null) {
-        const err = new Error("Video not found");
-        res.status(404).json({
-            status: false,
-            message: err.message,
-        });
-        return
-    }
-
-    res.status(200).json({
-        status: true,
-        data: 'haha',
-    });
-}))
-
-router.post("/api/videos/:youtubeId/notes", expressAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const video = await Video.findOne({
-        youtubeId: req.params.youtubeId
-    }).exec()
-
-    if (video === null) {
-        const err = new Error("Video not found");
-        res.status(404).json({
-            status: false,
-            message: err.message,
-        });
-        return
-    }
-
-    res.status(200).json({
-        status: true,
-        data: 'haha',
-    });
-}))
-
-router.put("/api/videos/:youtubeId/notes/:noteId", expressAsyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const video = await Video.findOne({
-        youtubeId: req.params.youtubeId
-    }).exec()
-
-    if (video === null) {
-        const err = new Error("Video not found");
-        res.status(404).json({
-            status: false,
-            message: err.message,
-        });
-        return
-    }
-
-    res.status(200).json({
-        status: true,
-        data: 'haha',
-    });
-}))
-
+router.post("/api/notes/:youtubeId/:noteId", verifyTokenMW, deleteNote)
 
 
 export default router

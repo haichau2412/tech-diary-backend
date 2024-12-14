@@ -19,13 +19,17 @@ const VideoSchema = new Schema({
     customName: { type: String },
     userId: { type: Schema.Types.ObjectId, ref: "User" },
     userUUID: { type: String, required: true },
+}, { timestamps: true })
+
+const IndividualNote = new Schema({
+    from: { type: Number, required: true },
+    text: { type: String, required: true, maxLength: 200 }
 })
 
 const NoteSchema = new Schema({
     videoId: { type: Schema.Types.ObjectId, ref: "Video" },
-    from: { type: Number, required: true, unique: true },
-    note: { type: String, maxLength: 200 }
-})
+    notes: [IndividualNote]
+}, { timestamps: true })
 
 export const Video = mongoose.model("Video", VideoSchema, 'videos');
 export const Note = mongoose.model("Note", NoteSchema, 'notes');
