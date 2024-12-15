@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Video, Note, User } from "../../models/video";
+import { Video, Note, User } from "../../models/mongo";
 import expressAsyncHandler from "express-async-handler";
 
 export const updateVideoName = expressAsyncHandler(async (req: Request, res: Response) => {
@@ -26,8 +26,11 @@ export const getVideo = expressAsyncHandler(async (req: Request, res: Response) 
         userUUID: userId
     })
 
+
     if (videos.length === 0) {
-        res.status(204)
+        res.status(204).json({
+            data: []
+        })
         return
     }
 
@@ -75,7 +78,6 @@ export const addVideo = expressAsyncHandler(async (req: Request, res: Response) 
                 })
                 await newDoc.save()
                 res.location(`/api/videos/${youtubeId}`).status(201).json({
-                    success: true,
                     message: 'Resource created successfully'
                 })
                 return

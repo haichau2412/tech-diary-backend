@@ -13,13 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.importNote = exports.deleteNote = exports.getNote = exports.addNote = exports.deleteVideo = exports.addVideo = exports.getVideo = exports.updateVideoName = void 0;
-const video_1 = require("../../models/video");
+const mongo_1 = require("../../models/mongo");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 exports.updateVideoName = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
     const { videoId } = req.params;
     const { customName } = req.body;
-    yield video_1.Video.findOneAndUpdate({
+    yield mongo_1.Video.findOneAndUpdate({
         videoId: videoId,
         userUUID: userId
     }, {
@@ -30,11 +30,13 @@ exports.updateVideoName = (0, express_async_handler_1.default)((req, res) => __a
 }));
 exports.getVideo = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
-    const videos = yield video_1.Video.find({
+    const videos = yield mongo_1.Video.find({
         userUUID: userId
     });
     if (videos.length === 0) {
-        res.status(204);
+        res.status(204).json({
+            data: []
+        });
         return;
     }
     res.status(200).json({
@@ -57,16 +59,16 @@ exports.addVideo = (0, express_async_handler_1.default)((req, res) => __awaiter(
             });
             return;
         }
-        const user = yield video_1.User.findOne({
+        const user = yield mongo_1.User.findOne({
             uuid: userId
         });
         if (user) {
-            const video = yield video_1.Video.findOne({
+            const video = yield mongo_1.Video.findOne({
                 youtubeId,
                 userUUID: userId
             });
             if (!video) {
-                const newDoc = new video_1.Video({
+                const newDoc = new mongo_1.Video({
                     youtubeId,
                     userId: user._id,
                     userUUID: user.uuid,
@@ -74,7 +76,6 @@ exports.addVideo = (0, express_async_handler_1.default)((req, res) => __awaiter(
                 });
                 yield newDoc.save();
                 res.location(`/api/videos/${youtubeId}`).status(201).json({
-                    success: true,
                     message: 'Resource created successfully'
                 });
                 return;
@@ -99,7 +100,7 @@ exports.addVideo = (0, express_async_handler_1.default)((req, res) => __awaiter(
 exports.deleteVideo = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
     const { videoId } = req.params;
-    const deletedItem = yield video_1.Video.findOneAndDelete({
+    const deletedItem = yield mongo_1.Video.findOneAndDelete({
         userUUID: userId,
         youtubeId: videoId
     }, {
@@ -108,7 +109,7 @@ exports.deleteVideo = (0, express_async_handler_1.default)((req, res) => __await
         }
     });
     if (deletedItem) {
-        yield video_1.Note.findOneAndDelete({
+        yield mongo_1.Note.findOneAndDelete({
             videoId: deletedItem._id
         });
         res.status(200);
@@ -119,7 +120,7 @@ exports.deleteVideo = (0, express_async_handler_1.default)((req, res) => __await
 }));
 exports.addNote = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
-    const video = yield video_1.Video.findOne({
+    const video = yield mongo_1.Video.findOne({
         youtubeId: req.params.youtubeId,
         userUUID: userId
     });
@@ -130,7 +131,7 @@ exports.addNote = (0, express_async_handler_1.default)((req, res) => __awaiter(v
         return;
     }
     const { from, text } = req.body;
-    const _note = yield video_1.Note.findOne({
+    const _note = yield mongo_1.Note.findOne({
         videoId: video._id,
     });
     const hasNote = !!_note;
@@ -142,7 +143,7 @@ exports.addNote = (0, express_async_handler_1.default)((req, res) => __awaiter(v
     _allNotes.push({ from, text });
     console.log('result', from, text, _allNotes);
     if (hasNote) {
-        yield video_1.Note.findOneAndUpdate({
+        yield mongo_1.Note.findOneAndUpdate({
             videoId: video._id,
         }, {
             videoId: video._id,
@@ -150,7 +151,7 @@ exports.addNote = (0, express_async_handler_1.default)((req, res) => __awaiter(v
         }, { new: true, upsert: true });
     }
     else {
-        const newNote = new video_1.Note({
+        const newNote = new mongo_1.Note({
             videoId: video._id,
             notes: _allNotes
         });
@@ -164,7 +165,7 @@ exports.addNote = (0, express_async_handler_1.default)((req, res) => __awaiter(v
 }));
 exports.getNote = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
-    const video = yield video_1.Video.findOne({
+    const video = yield mongo_1.Video.findOne({
         youtubeId: req.params.youtubeId,
         userUUID: userId
     });
@@ -174,7 +175,7 @@ exports.getNote = (0, express_async_handler_1.default)((req, res) => __awaiter(v
         });
         return;
     }
-    const _note = yield video_1.Note.findOne({
+    const _note = yield mongo_1.Note.findOne({
         videoId: video._id,
     });
     res.status(200).json({
@@ -184,7 +185,7 @@ exports.getNote = (0, express_async_handler_1.default)((req, res) => __awaiter(v
 }));
 exports.deleteNote = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
-    const video = yield video_1.Video.findOne({
+    const video = yield mongo_1.Video.findOne({
         youtubeId: req.params.youtubeId,
         userUUID: userId
     });
@@ -195,7 +196,7 @@ exports.deleteNote = (0, express_async_handler_1.default)((req, res) => __awaite
         return;
     }
     const { from } = req.body;
-    const _note = yield video_1.Note.findOne({
+    const _note = yield mongo_1.Note.findOne({
         videoId: video._id,
     });
     const hasNote = !!_note;
@@ -205,7 +206,7 @@ exports.deleteNote = (0, express_async_handler_1.default)((req, res) => __awaite
     }
     _allNotes = _allNotes.filter(({ from: _from }) => _from !== from);
     if (hasNote) {
-        yield video_1.Note.findOneAndUpdate({
+        yield mongo_1.Note.findOneAndUpdate({
             videoId: video._id,
         }, {
             videoId: video._id,
@@ -220,7 +221,7 @@ exports.deleteNote = (0, express_async_handler_1.default)((req, res) => __awaite
 }));
 exports.importNote = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
-    const video = yield video_1.Video.findOne({
+    const video = yield mongo_1.Video.findOne({
         youtubeId: req.params.youtubeId,
         userUUID: userId
     });
@@ -230,7 +231,7 @@ exports.importNote = (0, express_async_handler_1.default)((req, res) => __awaite
         });
         return;
     }
-    const _note = yield video_1.Note.findOne({
+    const _note = yield mongo_1.Note.findOne({
         videoId: video._id,
     });
     res.status(200).json({

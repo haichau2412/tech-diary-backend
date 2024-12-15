@@ -5,14 +5,16 @@ export interface UserDoc {
     name: string,
     email: string
     googleId: string
+    firstName: string
 }
+
 
 const UserSchema = new Schema<UserDoc>({
     uuid: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     email: { type: String, required: true },
     googleId: { type: String, required: true },
-})
+}, { timestamps: true })
 
 const VideoSchema = new Schema({
     youtubeId: { type: String, required: true },

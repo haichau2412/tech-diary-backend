@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { config } from "dotenv";
-import { User } from "../models/video";
+import { User } from "../models/mongo";
 import { v4 as uuidv4 } from 'uuid';
 
 config()
@@ -19,17 +19,31 @@ passport.use(
             profile: Profile,
             done: VerifyCallback) => {
             try {
+                console.log('profile', profile)
+
                 let user = await User.findOne({ googleId: profile.id });
 
                 if (user) {
-                    done(null, user);
+                    user = await User.findOneAndUpdate({ googleId: profile.id }, {
+                        email: profile.emails?.[0].value,
+                        googleId: profile.id,
+                        name: profile.name?.givenName || profile.displayName
+                    }, {
+                        new: true,
+                        upsert: true
+                    });
+
+                    if (user) {
+                        done(null, user);
+                    }
+
                 } else {
                     const uuid = uuidv4()
                     const newUser = new User({
-                        name: 'custom',
                         uuid,
                         email: profile.emails?.[0].value,
-                        googleId: profile.id
+                        googleId: profile.id,
+                        name: profile.name?.givenName || profile.displayName
                     })
                     await newUser.save()
                     done(null, newUser);

@@ -19,14 +19,21 @@ router.get('/auth/google/callback', passport_1.default.authenticate('google', { 
     const user = req.user;
     const payload = {
         userId: user === null || user === void 0 ? void 0 : user.uuid,
+        name: user === null || user === void 0 ? void 0 : user.name,
     };
     const accessToken = (0, token_1.generateAccessToken)(payload);
     const refreshToken = (0, token_1.generateRefreshToken)(payload);
+    res.cookie("name", user === null || user === void 0 ? void 0 : user.name, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: 31536000 * 1000
+    });
     res.cookie("userId", user === null || user === void 0 ? void 0 : user.uuid, {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        maxAge: 31536000
+        maxAge: 31536000 * 1000
     });
     res.cookie("refreshToken", refreshToken.default, {
         httpOnly: true,
@@ -50,6 +57,7 @@ router.get('/token/validate', (req, res, next) => {
             if (typeof result !== 'string') {
                 res.status(200).json({
                     message: 'access token valid',
+                    name: result.name,
                     expiredAt: result.exp
                 });
                 return;
