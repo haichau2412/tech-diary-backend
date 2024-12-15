@@ -86,11 +86,14 @@ router.get('/token/validate', (req, res, next) => {
     });
     return;
 });
-router.get('/logout', (req, res, next) => {
+router.post('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err)
             return next(err);
-        res.redirect('/');
+        res.clearCookie('userId');
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
+        res.status(200).send('Logged out successfully');
     });
 });
 exports.default = router;

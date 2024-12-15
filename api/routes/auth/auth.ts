@@ -18,6 +18,7 @@ router.get(
     passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
+
 router.get(
     '/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
@@ -107,10 +108,13 @@ router.get('/token/validate', (req: Request, res: Response, next: NextFunction) 
     return
 });
 
-router.get('/logout', (req: Request, res: Response, next: NextFunction) => {
+router.post('/logout', (req: Request, res: Response, next: NextFunction) => {
     req.logout((err) => {
         if (err) return next(err);
-        res.redirect('/');
+        res.clearCookie('userId'); 
+        res.clearCookie('accessToken');
+        res.clearCookie('refreshToken');
+        res.status(200).send('Logged out successfully');
     });
 });
 
