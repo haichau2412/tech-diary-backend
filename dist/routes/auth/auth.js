@@ -98,9 +98,26 @@ router.post('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err)
             return next(err);
-        res.clearCookie('userId');
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('userId', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
+        res.clearCookie('accessToken', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
+        res.clearCookie('refreshToken', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
+        res.clearCookie('name', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
         res.status(200).send('Logged out successfully');
     });
 });
