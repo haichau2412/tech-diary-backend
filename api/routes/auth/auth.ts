@@ -120,6 +120,7 @@ router.get('/token/validate', (req: Request, res: Response, next: NextFunction) 
 router.post('/logout', (req: Request, res: Response, next: NextFunction) => {
     req.logout((err) => {
         if (err) return next(err);
+        res.setHeader('Clear-Site-Data', "cookies")
         res.clearCookie('userId');
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
