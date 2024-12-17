@@ -120,10 +120,26 @@ router.get('/token/validate', (req: Request, res: Response, next: NextFunction) 
 router.post('/logout', (req: Request, res: Response, next: NextFunction) => {
     req.logout((err) => {
         if (err) return next(err);
-        res.setHeader('Clear-Site-Data', "cookies")
-        res.clearCookie('userId');
-        res.clearCookie('accessToken');
-        res.clearCookie('refreshToken');
+        res.clearCookie('userId', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
+        res.clearCookie('accessToken', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
+        res.clearCookie('refreshToken', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
+        res.clearCookie('name', {
+            sameSite: 'none',
+            httpOnly: true,
+            secure: true
+        });
         res.status(200).send('Logged out successfully');
     });
 });
