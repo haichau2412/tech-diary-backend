@@ -12,9 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.importNote = exports.deleteNote = exports.getNote = exports.addNote = exports.deleteVideo = exports.addVideo = exports.getVideo = exports.updateVideoName = void 0;
+exports.importNote = exports.deleteNote = exports.getNote = exports.addNote = exports.deleteVideo = exports.addVideo = exports.getVideo = exports.updateVideoName = exports.verifyVideo = void 0;
 const mongo_1 = require("../../models/mongo");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
+exports.verifyVideo = (0, express_async_handler_1.default)((_, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(200).json({
+        message: 'Valid'
+    });
+    return;
+}));
 exports.updateVideoName = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.cookies;
     const { videoId } = req.params;

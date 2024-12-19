@@ -24,9 +24,7 @@ exports.youtubeIdVerify = (0, express_async_handler_1.default)((req, res, next) 
     try {
         const response = yield fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${youtubeId}&key=${process.env.YOUTUBE_API}`);
         const data = yield response.json();
-        console.log('youtubeIdVerify');
         if (response.status === 200 && data.items && data.items.length > 0) {
-            console.log('youtubeIdVerify asasa');
             const item = data.items[0];
             res.locals.defaultName = removeHashtags(item.snippet.title);
             next();
@@ -36,6 +34,6 @@ exports.youtubeIdVerify = (0, express_async_handler_1.default)((req, res, next) 
     catch (err) {
         // no error handling
     }
-    res.status(400).json({ message: 'Invalid youtube link' });
+    res.status(400).json({ message: 'Invalid' });
     return;
 }));

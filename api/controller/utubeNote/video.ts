@@ -2,6 +2,14 @@ import { Request, Response } from "express";
 import { Video, Note, User } from "../../models/mongo";
 import expressAsyncHandler from "express-async-handler";
 
+export const verifyVideo = expressAsyncHandler(async (_: Request, res: Response) => {
+    res.status(200).json({
+        message: 'Valid'
+    })
+
+    return
+})
+
 export const updateVideoName = expressAsyncHandler(async (req: Request, res: Response) => {
     const { userId } = req.cookies
     const { videoId } = req.params

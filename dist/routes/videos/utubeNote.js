@@ -14,4 +14,5 @@ router.delete("/api/videos", tokenVerify_1.verifyTokenMW, youtubeIdVerify_1.yout
 router.get("/api/notes/:youtubeId", tokenVerify_1.verifyTokenMW, video_1.getNote);
 router.post("/api/notes/:youtubeId", tokenVerify_1.verifyTokenMW, video_1.addNote);
 router.post("/api/notes/:youtubeId/:noteId", tokenVerify_1.verifyTokenMW, video_1.deleteNote);
+router.post("/verifyVideo", youtubeIdVerify_1.youtubeIdVerify, video_1.verifyVideo);
 exports.default = router;
