@@ -16,7 +16,7 @@ const express_1 = require("express");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const router = (0, express_1.Router)();
 let clients = [];
-const _secret = `${process.env.YOUTUBE_API}`;
+const _secret = `${process.env.ONLINE_SECRET}`;
 let _status = 'offline';
 let _lastSeen = 0;
 const createStr = () => {

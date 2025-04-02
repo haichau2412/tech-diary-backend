@@ -7,7 +7,7 @@ let clients: any[] = [];
 
 type Status = "online" | "offline" | "busy";
 
-const _secret = `${process.env.YOUTUBE_API}`
+const _secret = `${process.env.ONLINE_SECRET}`
 
 let _status: Status = 'offline'
 let _lastSeen: number = 0
