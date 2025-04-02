@@ -45,8 +45,9 @@ router.get("/onlineStatus",
 
 router.post("/status", (req, res) => {
     const { secretCode, status } = req.body;
-
+    console.log('secretCode', secretCode, _secret)
     if (_secret === secretCode) {
+
 
         _status = status ?? 'online'
         if (_status === 'offline') {
