@@ -14,13 +14,16 @@ let _lastSeen: number = 0
 
 const createStr = () => {
     const data: any = {
+
     }
+
 
     data.status = _status
 
     if (_lastSeen > 0) {
         data.lastSeen = _lastSeen
     }
+    console.log('data', data)
 
     return JSON.stringify(data)
 }
@@ -45,11 +48,10 @@ router.get("/onlineStatus",
 
 router.post("/status", (req, res) => {
     const { secretCode, status } = req.body;
-    console.log('secretCode', secretCode, _secret)
+
     if (_secret === secretCode) {
-
-
         _status = status ?? 'online'
+        console.log('secretCode', secretCode, _status)
         if (_status === 'offline') {
             _lastSeen = Date.now()
         }

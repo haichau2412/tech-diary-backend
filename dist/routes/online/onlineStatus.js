@@ -25,6 +25,7 @@ const createStr = () => {
     if (_lastSeen > 0) {
         data.lastSeen = _lastSeen;
     }
+    console.log('data', data);
     return JSON.stringify(data);
 };
 router.get("/onlineStatus", (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -43,9 +44,9 @@ router.get("/onlineStatus", (0, express_async_handler_1.default)((req, res) => _
 })));
 router.post("/status", (req, res) => {
     const { secretCode, status } = req.body;
-    console.log('secretCode', secretCode, _secret);
     if (_secret === secretCode) {
         _status = status !== null && status !== void 0 ? status : 'online';
+        console.log('secretCode', secretCode, _status);
         if (_status === 'offline') {
             _lastSeen = Date.now();
         }
