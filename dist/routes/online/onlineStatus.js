@@ -16,34 +16,46 @@ const express_1 = require("express");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const router = (0, express_1.Router)();
 let clients = [];
-let onlineUsers = new Set();
+const _secret = `${process.env.YOUTUBE_API}`;
+let _status = 'offline';
+let _lastSeen = 0;
+const createStr = () => {
+    const data = {};
+    data.status = _status;
+    if (_lastSeen > 0) {
+        data.lastSeen = _lastSeen;
+    }
+    return JSON.stringify(data);
+};
 router.get("/onlineStatus", (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("New client connected");
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
     res.flushHeaders(); // Ensure headers are sent immediately
     clients.push(res); // Store the connection
-    console.log("New client connected");
     req.on("close", () => {
         clients = clients.filter(client => client !== res);
     });
+    setTimeout(() => {
+        const dataStr = createStr();
+        res.write(`data: ${dataStr}\n\n`);
+    }, 500);
 })));
 router.post("/status", (req, res) => {
-    const { userId, online } = req.body;
-    if (online) {
-        onlineUsers.add(userId);
-    }
-    else {
-        onlineUsers.delete(userId);
+    const { secretCode, status } = req.body;
+    if (_secret === secretCode) {
+        _status = status !== null && status !== void 0 ? status : 'online';
+        if (_status === 'offline') {
+            _lastSeen = Date.now();
+        }
     }
     broadcastStatus();
     res.send({ success: true });
 });
 const broadcastStatus = () => {
-    const data = JSON.stringify({ onlineUsers: Array.from(onlineUsers) });
+    const dataStr = createStr();
     clients.forEach(client => {
-        client.write(`data: ${data}\n\n`);
+        client.write(`data: ${dataStr}\n\n`);
     });
 };
 exports.default = router;

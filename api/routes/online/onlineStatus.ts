@@ -1,50 +1,68 @@
 import { Router, Request, Response } from 'express';
-import { verifyTokenMW } from '../../middlewares/tokenVerify';
-
 import expressAsyncHandler from "express-async-handler"
 
 const router = Router()
 
-let clients:any[] = [];
-let onlineUsers = new Set();
+let clients: any[] = [];
+
+type Status = "online" | "offline" | "busy";
+
+const _secret = `${process.env.YOUTUBE_API}`
+
+let _status: Status = 'offline'
+let _lastSeen: number = 0
+
+const createStr = () => {
+    const data: any = {
+    }
+
+    data.status = _status
+
+    if (_lastSeen > 0) {
+        data.lastSeen = _lastSeen
+    }
+
+    return JSON.stringify(data)
+}
 
 router.get("/onlineStatus",
     expressAsyncHandler(async (req: Request, res: Response) => {
-    console.log("New client connected");
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+        res.flushHeaders(); // Ensure headers are sent immediately
+        clients.push(res); // Store the connection
 
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders(); // Ensure headers are sent immediately
+        req.on("close", () => {
+            clients = clients.filter(client => client !== res);
+        });
 
-    clients.push(res); // Store the connection
-
-    console.log("New client connected");
-
-    req.on("close", () => {
-        clients = clients.filter(client => client !== res);
-    });
-}))
+        setTimeout(() => {
+            const dataStr = createStr()
+            res.write(`data: ${dataStr}\n\n`);
+        }, 500)
+    }))
 
 router.post("/status", (req, res) => {
-    const { userId, online } = req.body;
+    const { secretCode, status } = req.body;
 
-    if (online) {
-        onlineUsers.add(userId);
-    } else {
-        onlineUsers.delete(userId);
+    if (_secret === secretCode) {
+
+        _status = status ?? 'online'
+        if (_status === 'offline') {
+            _lastSeen = Date.now()
+        }
     }
-
     broadcastStatus();
     res.send({ success: true });
 });
 
 
 const broadcastStatus = () => {
-    const data = JSON.stringify({ onlineUsers: Array.from(onlineUsers) });
+    const dataStr = createStr()
 
     clients.forEach(client => {
-        client.write(`data: ${data}\n\n`);
+        client.write(`data: ${dataStr}\n\n`);
     });
 };
 
