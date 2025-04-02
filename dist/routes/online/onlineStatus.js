@@ -44,9 +44,10 @@ router.get("/onlineStatus", (0, express_async_handler_1.default)((req, res) => _
 })));
 router.post("/status", (req, res) => {
     const { secretCode, status } = req.body;
+    console.log('secretCode', secretCode, _secret, _secret === secretCode);
     if (_secret === secretCode) {
         _status = status !== null && status !== void 0 ? status : 'online';
-        console.log('secretCode', secretCode, _status);
+        console.log('_status', _status);
         if (_status === 'offline') {
             _lastSeen = Date.now();
         }
