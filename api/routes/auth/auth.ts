@@ -59,11 +59,11 @@ router.get(
             maxAge: accessToken.tokenExpiration * 1000
         });
 
-        res.redirect(302, process.env.UI_URL as string);
+        res.redirect(302, `${process.env.UI_URL}/playground` as string);
     }
 );
 
-router.get('/token/validate', (req: Request, res: Response, next: NextFunction) => {
+router.get('/auth/validate', (req: Request, res: Response, next: NextFunction) => {
     const { accessToken, refreshToken } = req.cookies
 
     if (accessToken) {
@@ -72,9 +72,10 @@ router.get('/token/validate', (req: Request, res: Response, next: NextFunction) 
 
             if (typeof result !== 'string') {
                 res.status(200).json({
-                    message: 'access token valid',
-                    name: result.name,
-                    expiredAt: result.exp
+                    message: 'succeed',
+                    data: {
+                        expiredAt: result.exp
+                    }
                 })
                 return
             }
@@ -100,8 +101,10 @@ router.get('/token/validate', (req: Request, res: Response, next: NextFunction) 
                 });
 
                 res.status(200).json({
-                    message: 'access token renewed',
-                    expiredAt: result.exp
+                    message: 'succeed',
+                    data: {
+                        expiredAt: result.exp
+                    }
                 })
                 return
             }
@@ -112,7 +115,7 @@ router.get('/token/validate', (req: Request, res: Response, next: NextFunction) 
     }
 
     res.status(401).json({
-        message: "Please login again"
+        message: "unauthorized"
     })
     return
 });

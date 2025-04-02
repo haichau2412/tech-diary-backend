@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const db_1 = require("./libs/db");
 const utubeNote_1 = __importDefault(require("./routes/videos/utubeNote"));
 const express_session_1 = __importDefault(require("express-session"));
+const onlineStatus_1 = __importDefault(require("./routes/online/onlineStatus"));
 const passport_1 = __importDefault(require("passport"));
 const dotenv_1 = require("dotenv");
 const auth_1 = __importDefault(require("./routes/auth/auth"));
@@ -36,6 +37,7 @@ app.use((0, express_session_1.default)({
 app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 app.use(body_parser_1.default.json());
+app.use(onlineStatus_1.default);
 app.use(utubeNote_1.default);
 app.use(auth_1.default);
 app.get('/', (req, res) => {

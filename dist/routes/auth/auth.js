@@ -47,18 +47,19 @@ router.get('/auth/google/callback', passport_1.default.authenticate('google', { 
         sameSite: 'none',
         maxAge: accessToken.tokenExpiration * 1000
     });
-    res.redirect(302, process.env.UI_URL);
+    res.redirect(302, `${process.env.UI_URL}/playground`);
 });
-router.get('/token/validate', (req, res, next) => {
+router.get('/auth/validate', (req, res, next) => {
     const { accessToken, refreshToken } = req.cookies;
     if (accessToken) {
         try {
             const result = (0, token_1.verifyAccessToken)(accessToken);
             if (typeof result !== 'string') {
                 res.status(200).json({
-                    message: 'access token valid',
-                    name: result.name,
-                    expiredAt: result.exp
+                    message: 'succeed',
+                    data: {
+                        expiredAt: result.exp
+                    }
                 });
                 return;
             }
@@ -79,8 +80,10 @@ router.get('/token/validate', (req, res, next) => {
                     maxAge: accessToken.tokenExpiration * 1000
                 });
                 res.status(200).json({
-                    message: 'access token renewed',
-                    expiredAt: result.exp
+                    message: 'succeed',
+                    data: {
+                        expiredAt: result.exp
+                    }
                 });
                 return;
             }
@@ -90,7 +93,7 @@ router.get('/token/validate', (req, res, next) => {
         }
     }
     res.status(401).json({
-        message: "Please login again"
+        message: "unauthorized"
     });
     return;
 });

@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { main } from './libs/db';
 import utubeNote from './routes/videos/utubeNote'
 import session from 'express-session'
+import online from './routes/online/onlineStatus'
 import passport from 'passport';
 import { config } from 'dotenv';
 import auth from './routes/auth/auth'
@@ -37,8 +38,11 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
+app.use(online)
 app.use(utubeNote)
 app.use(auth)
+
+
 
 
 app.get('/', (req: Request, res: Response) => {

@@ -8,7 +8,6 @@ export interface UserDoc {
     firstName: string
 }
 
-
 const UserSchema = new Schema<UserDoc>({
     uuid: { type: String, required: true, unique: true },
     name: { type: String, required: true },
@@ -20,7 +19,6 @@ const VideoSchema = new Schema({
     youtubeId: { type: String, required: true },
     customName: { type: String },
     userId: { type: Schema.Types.ObjectId, ref: "User" },
-    userUUID: { type: String, required: true },
 }, { timestamps: true })
 
 const IndividualNote = new Schema({
@@ -29,7 +27,7 @@ const IndividualNote = new Schema({
 })
 
 const NoteSchema = new Schema({
-    videoId: { type: Schema.Types.ObjectId, ref: "Video" },
+    videoId: { type: Schema.Types.ObjectId, ref: "Video" ,required: true},
     notes: [IndividualNote]
 }, { timestamps: true })
 
